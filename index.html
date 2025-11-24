@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Colorado Holiday Markets 2025</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Martel:wght@300;400;600;700&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Libre Franklin', sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f8f9fa;
@@ -32,15 +33,21 @@
             border-bottom: 3px solid #d43e1f;
         }
         
+        h1, h2, h3, h4 {
+            font-family: 'Martel', serif;
+        }
+        
         h1 {
             color: #d43e1f;
             margin-bottom: 10px;
             font-size: 2.5em;
+            font-weight: 700;
         }
         
         .subtitle {
             color: #666;
             font-size: 1.2em;
+            font-weight: 400;
         }
         
         .dashboard {
@@ -83,6 +90,7 @@
             margin-bottom: 15px;
             border-bottom: 2px solid #f0f0f0;
             padding-bottom: 10px;
+            font-weight: 600;
         }
         
         .filter-group {
@@ -94,6 +102,7 @@
             margin-bottom: 5px;
             font-weight: 600;
             color: #555;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         .filter-group select,
@@ -104,6 +113,7 @@
             border-radius: 5px;
             font-size: 14px;
             transition: border-color 0.3s;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         .filter-group select:focus,
@@ -123,6 +133,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         button:hover {
@@ -153,6 +164,7 @@
             font-weight: 600;
             position: sticky;
             top: 0;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         tbody tr {
@@ -171,6 +183,7 @@
         
         td {
             padding: 15px;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         .details-container {
@@ -189,6 +202,7 @@
             color: #d43e1f;
             margin-bottom: 15px;
             font-size: 1.5em;
+            font-weight: 600;
         }
         
         .detail-item {
@@ -206,6 +220,7 @@
             color: #555;
             display: inline-block;
             width: 100px;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         .tooltip {
@@ -219,11 +234,13 @@
             font-size: 14px;
             max-width: 300px;
             z-index: 1000;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         a {
             color: #d43e1f;
             text-decoration: none;
+            font-family: 'Libre Franklin', sans-serif;
         }
         
         a:hover {
@@ -248,11 +265,28 @@
             font-size: 2em;
             font-weight: bold;
             color: #d43e1f;
+            font-family: 'Martel', serif;
         }
         
         .stat-label {
             color: #666;
             font-size: 0.9em;
+            font-family: 'Libre Franklin', sans-serif;
+        }
+        
+        .county-boundary {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 0.5;
+            opacity: 0.6;
+        }
+        
+        .county-label {
+            font-size: 8px;
+            fill: #888;
+            pointer-events: none;
+            font-family: 'Libre Franklin', sans-serif;
+            text-anchor: middle;
         }
     </style>
 </head>
@@ -412,6 +446,19 @@
             }
         ];
 
+        // County data (sample - you'll add all 65 counties)
+        const countyData = [
+            {
+                "geometry": {"type":"Polygon","coordinates":[[[-105.052892,39.914224],[-105.053246,39.791063],[-104.960268,39.790966],[-104.940476,39.794601],[-104.927002,39.783778],[-104.903438,39.783808],[-104.903561,39.798391],[-104.884627,39.798321],[-104.884585,39.812975],[-104.866075,39.812986],[-104.866041,39.798386],[-104.790895,39.798251],[-104.790859,39.841802],[-104.762279,39.84539],[-104.732138,39.845086],[-104.73155,39.898611],[-104.705568,39.89849],[-104.705375,39.906418],[-104.633858,39.906067],[-104.633969,39.899289],[-104.600435,39.899459],[-104.605791,39.873827],[-104.619841,39.873767],[-104.619938,39.822421],[-104.76247,39.82298],[-104.762606,39.798433],[-104.734399,39.798442],[-104.734601,39.769181],[-104.764576,39.769391],[-104.781727,39.773387],[-104.828229,39.773174],[-104.832961,39.766195],[-104.856523,39.768391],[-104.856431,39.758387],[-104.879901,39.754607],[-104.884646,39.740156],[-104.659953,39.740477],[-104.526958,39.738669],[-104.394586,39.73804],[-104.209525,39.739018],[-103.972303,39.740401],[-103.706547,39.739894],[-103.705701,40.001366],[-103.8661,40.001233],[-104.150332,40.000856],[-104.37683,40.000739],[-104.60186,40.000529],[-104.961405,40.000337],[-104.980944,40.000325],[-104.997423,39.981213],[-105.015845,39.981193],[-105.015469,39.921402],[-105.034395,39.921305],[-105.052892,39.914224]]]},
+                "County": "Adams"
+            },
+            {
+                "geometry": {"type":"Polygon","coordinates":[[[-106.038413,37.748353],[-106.039299,37.576986],[-106.039331,37.400852],[-106.038912,37.356953],[-105.984566,37.356269],[-105.743339,37.356798],[-105.597019,37.480175],[-105.496201,37.564289],[-105.485516,37.577899],[-105.494683,37.585542],[-105.493273,37.600919],[-105.498602,37.614137],[-105.491513,37.625003],[-105.486976,37.653483],[-105.477242,37.666199],[-105.481374,37.693755],[-105.477302,37.707686],[-105.454245,37.723951],[-105.457255,37.751464],[-105.497979,37.751003],[-105.617269,37.752306],[-105.882491,37.749492],[-106.038413,37.748353]]]},
+                "County": "Alamosa"
+            }
+            // Add the remaining 63 counties here following the same format
+        ];
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
@@ -460,11 +507,11 @@
 
             // Set up scales
             const xScale = d3.scaleLinear()
-                .domain(d3.extent(marketData, d => d.lon))
+                .domain([-109.06, -102.04]) // Colorado bounds
                 .range([margin.left, width - margin.right]);
 
             const yScale = d3.scaleLinear()
-                .domain(d3.extent(marketData, d => d.Latitude))
+                .domain([36.99, 41.0]) // Colorado bounds
                 .range([height - margin.bottom, margin.top]);
 
             // Draw Colorado outline
@@ -479,6 +526,30 @@
                 .attr("stroke", "#ccc")
                 .attr("stroke-width", 1)
                 .attr("stroke-dasharray", "5,5");
+
+            // Draw county boundaries
+            countyData.forEach(county => {
+                const coordinates = county.geometry.type === 'Polygon' 
+                    ? county.geometry.coordinates 
+                    : county.geometry.coordinates[0]; // For MultiPolygon, use first polygon
+                
+                coordinates.forEach(polygon => {
+                    svg.append("path")
+                        .datum(polygon)
+                        .attr("d", lineGenerator)
+                        .attr("class", "county-boundary");
+                    
+                    // Add county labels (centered)
+                    const center = d3.polygonCentroid(polygon);
+                    if (center[0] && center[1]) {
+                        svg.append("text")
+                            .attr("class", "county-label")
+                            .attr("x", xScale(center[0]))
+                            .attr("y", yScale(center[1]))
+                            .text(county.County);
+                    }
+                });
+            });
 
             // Create tooltip
             const tooltip = d3.select("body")
@@ -519,26 +590,6 @@
                 .on("click", function(event, d) {
                     highlightMarket(d);
                 });
-
-            // Add city labels for context
-            const cities = [
-                { name: "Denver", lat: 39.7392, lon: -104.9903 },
-                { name: "Boulder", lat: 40.0150, lon: -105.2705 },
-                { name: "Colorado Springs", lat: 38.8339, lon: -104.8214 }
-            ];
-
-            svg.selectAll(".city-label")
-                .data(cities)
-                .enter()
-                .append("text")
-                .attr("class", "city-label")
-                .attr("x", d => xScale(d.lon))
-                .attr("y", d => yScale(d.lat))
-                .attr("text-anchor", "middle")
-                .attr("dy", -10)
-                .style("font-size", "12px")
-                .style("fill", "#666")
-                .text(d => d.name);
         }
 
         function initializeTable() {
@@ -710,8 +761,6 @@
 
         // Handle window resize
         window.addEventListener('resize', function() {
-            // Simple resize handling - in a production app you might want to 
-            // fully recreate the map or use more sophisticated responsive techniques
             d3.select("#map svg").attr("width", document.getElementById('map').clientWidth);
         });
     </script>
