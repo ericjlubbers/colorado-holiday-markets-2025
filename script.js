@@ -6,7 +6,7 @@ const CONFIG = {
     SHEET_ID: '1OsQDhJXLwKmnybwNePIhnvgf2nrWH1E_8mv1NWc_ESw',
     MAP_CENTER: [39.0, -105.5],
     MAP_ZOOM: 7,
-    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=ac90b6e9-8eef-490e-8c0d-4005455f88a9',
     MAP_ATTRIBUTION: '',
     // Direct export URL - no proxy needed
     CSV_URL_TEMPLATE: 'https://docs.google.com/spreadsheets/d/{sheetId}/export?format=csv&gid=0'
