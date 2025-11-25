@@ -104,9 +104,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .header-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--spacing-md);
-    align-items: stretch;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .header h1 {
@@ -115,6 +116,8 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
     letter-spacing: -0.5px;
     font-family: var(--font-family-serif);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .header .search-input {
@@ -126,6 +129,8 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(255, 255, 255, 0.95);
     color: var(--text-primary);
     transition: border-color var(--transition-fast);
+    flex: 1;
+    min-width: 200px;
 }
 
 .header .search-input:focus {
@@ -278,6 +283,29 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+}
+
+.filter-spacer {
+    flex: 1;
+}
+
+.reset-filters-link {
+    margin-left: var(--spacing-md);
+    padding-left: var(--spacing-md);
+    border-left: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: var(--font-weight-medium);
+}
+
+.reset-filters-link:hover {
+    color: var(--primary-color);
 }
 
 /* ============================================================================
@@ -480,8 +508,27 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: var(--spacing-lg);
 }
 
+.details-location-row,
+.details-description-row {
+    margin-bottom: var(--spacing-lg);
+}
+
 .details-field {
     margin-bottom: 0;
+}
+
+.maps-link {
+    display: inline-block;
+    margin-top: var(--spacing-sm);
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.maps-link:hover {
+    color: #a01829;
 }
 
 .details-field-label {

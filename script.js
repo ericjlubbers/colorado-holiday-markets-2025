@@ -77,7 +77,7 @@ function initializeMap() {
         // Using standard Leaflet.MarkerCluster spiderfication (circle layout)
         state.markerClusterGroup = L.markerClusterGroup({
             // Only cluster markers that are very close together
-            maxClusterRadius: 20,
+            maxClusterRadius: 30,
             // Disable clustering at zoom level 13+
             disableClusteringAtZoom: 13,
             // Spiderfication options for the circle layout
@@ -622,6 +622,10 @@ function showDetails(market) {
     // Build calendar
     const calendar = generateCalendar(market.dates || []);
     
+    // Build Google Maps URL
+    const mapsQuery = encodeURIComponent(market.address);
+    const googlemapsUrl = `https://www.google.com/maps/search/${mapsQuery}`;
+    
     // Build content with new layout
     const html = `
         <!-- Header row with date, cost, city -->
@@ -640,20 +644,26 @@ function showDetails(market) {
             </div>
         </div>
         
-        <!-- Body row with description and location -->
-        <div class="details-body-row">
+        <!-- Location row -->
+        <div class="details-location-row">
+            <div class="details-field">
+                <span class="details-field-label">Location</span>
+                <div class="details-field-value">
+                    ${market.address}
+                </div>
+                <a href="${googlemapsUrl}" target="_blank" rel="noopener noreferrer" class="maps-link">
+                    View on Google Maps
+                </a>
+            </div>
+        </div>
+        
+        <!-- Description row -->
+        <div class="details-description-row">
             <div class="details-field">
                 <span class="details-field-label">Description</span>
                 <div class="details-field-value">
                     ${market.description}
                     ${market.website ? `<div style="margin-top: var(--spacing-md);"><a href="${market.website}" target="_blank" rel="noopener noreferrer" class="visit-website-btn">Visit Website</a></div>` : ''}
-                </div>
-            </div>
-            <div class="details-field">
-                <span class="details-field-label">Location</span>
-                <div class="details-field-value">
-                    ${market.address}<br>
-                    <span style="font-size: 0.875rem; opacity: 0.8;">Zip: ${market.zipCode}</span>
                 </div>
             </div>
         </div>
@@ -786,6 +796,20 @@ function setupEventListeners() {
     
     document.getElementById('weekendBtn').addEventListener('click', () => {
         toggleQuickFilter('weekend', document.getElementById('weekendBtn'));
+    });
+    
+    // Reset filters link
+    document.getElementById('resetFiltersLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('searchInput').value = '';
+        document.getElementById('cityFilter').value = '';
+        document.querySelectorAll('.quick-filter-btn').forEach(btn => btn.classList.remove('active'));
+        state.currentFilters = {
+            search: '',
+            city: '',
+            dateFilter: ''
+        };
+        updateDisplay();
     });
     
     // Close modal
