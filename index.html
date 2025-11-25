@@ -8,6 +8,10 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     
+    <!-- Leaflet Marker Clustering CSS & JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,10 +19,37 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>Colorado Holiday Markets</h1>
+            <div class="header-content">
+                <h1>Colorado Holiday Markets</h1>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search markets..."
+                >
+            </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+            <div class="filters-content">
+                <div class="filter-group">
+                    <select id="cityFilter" class="filter-select">
+                        <option value="">All Cities</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Open:</label>
+                </div>
+
+                <button class="quick-filter-btn" id="todayBtn">Today</button>
+                <button class="quick-filter-btn" id="tomorrowBtn">Tomorrow</button>
+                <button class="quick-filter-btn" id="weekendBtn">This Weekend</button>
+            </div>
+        </div>
+
+        <!-- Main Content (Map + Table) -->
         <div class="main-content">
             <!-- Map Container -->
             <div class="map-container">
@@ -27,44 +58,14 @@
 
             <!-- Table Container -->
             <div class="table-container">
-                <!-- Filters Bar -->
-                <div class="filters-bar">
-                    <div class="filters-content">
-                        <div class="search-section">
-                            <input 
-                                type="text" 
-                                id="searchInput" 
-                                class="search-input" 
-                                placeholder="Search markets..."
-                            >
-                        </div>
-                        
-                        <div class="filter-group">
-                            <select id="regionFilter" class="filter-select">
-                                <option value="">All Regions</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label>Open:</label>
-                        </div>
-
-                        <button class="quick-filter-btn" id="todayBtn">Today</button>
-                        <button class="quick-filter-btn" id="tomorrowBtn">Tomorrow</button>
-                        <button class="quick-filter-btn" id="weekendBtn">This Weekend</button>
-                    </div>
-                </div>
-
-                <!-- Results Table -->
                 <div class="results-section">
-                    <h3>Markets (<span id="resultsCount">0</span>)</h3>
                     <div class="table-wrapper">
                         <table id="resultsTable" class="results-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Region</th>
+                                    <th class="sortable" data-column="name">Name</th>
+                                    <th class="sortable" data-column="date">Date</th>
+                                    <th class="sortable" data-column="city">City</th>
                                 </tr>
                             </thead>
                             <tbody id="resultsTableBody">
@@ -92,6 +93,9 @@
 
     <!-- Leaflet JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    
+    <!-- Leaflet Marker Clustering JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
     
     <!-- Custom JS -->
     <script src="script.js"></script>

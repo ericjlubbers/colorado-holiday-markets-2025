@@ -6,7 +6,7 @@ const CONFIG = {
     SHEET_ID: '1OsQDhJXLwKmnybwNePIhnvgf2nrWH1E_8mv1NWc_ESw',
     MAP_CENTER: [39.0, -105.5],
     MAP_ZOOM: 7,
-    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=ac90b6e9-8eef-490e-8c0d-4005455f88a9',
+    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
     MAP_ATTRIBUTION: '',
     // Direct export URL - no proxy needed
     CSV_URL_TEMPLATE: 'https://docs.google.com/spreadsheets/d/{sheetId}/export?format=csv&gid=0'
@@ -21,11 +21,13 @@ const state = {
     filteredMarkets: [],
     selectedMarket: null,
     map: null,
+    markerClusterGroup: null,
     markers: {},
+    sortColumn: 'name',
+    sortAscending: true,
     currentFilters: {
         search: '',
-        region: '',
-        cost: '',
+        city: '',
         dateFilter: ''
     },
     today: new Date(),
@@ -71,7 +73,14 @@ function initializeMap() {
             minZoom: 5
         }).addTo(state.map);
         
-        console.log('✅ Map initialized');
+        // Initialize marker cluster group
+        state.markerClusterGroup = L.markerClusterGroup({
+            maxClusterRadius: 50,
+            disableClusteringAtZoom: 15
+        });
+        state.map.addLayer(state.markerClusterGroup);
+        
+        console.log('✅ Map initialized with clustering');
     } catch (error) {
         console.error('❌ Error initializing map:', error);
     }
@@ -140,13 +149,17 @@ function parseCSV(csv) {
         
         if (values.length < 3 || !values[0].trim()) continue;
         
+        const address = values[5]?.trim() || '';
+        const city = extractCityFromAddress(address);
+        
         const market = {
             name: values[0]?.trim() || '',
             lat: parseFloat(values[1]) || null,
             lon: parseFloat(values[2]) || null,
             region: values[3]?.trim() || 'Unknown',
+            city: city,
             zipCode: values[4]?.trim() || '',
-            address: values[5]?.trim() || '',
+            address: address,
             date: values[6]?.trim() || '',
             cost: values[7]?.trim() || 'Free',
             website: values[8]?.trim() || '',
@@ -160,6 +173,18 @@ function parseCSV(csv) {
     }
     
     return markets;
+}
+
+function extractCityFromAddress(address) {
+    // Extract city from address format: "Street Address, City, State Zip"
+    // Find the part before the state abbreviation
+    const parts = address.split(',');
+    if (parts.length >= 2) {
+        // Usually city is the second-to-last part (before state)
+        const cityPart = parts[parts.length - 2].trim();
+        return cityPart;
+    }
+    return 'Unknown';
 }
 
 function parseCSVLine(line) {
@@ -191,7 +216,12 @@ function parseCSVLine(line) {
 }
 
 function parseMarketDates(dateString) {
-    // Parse date strings like "Dec. 13-14" or "Nov. 21-Dec. 23"
+    // Parse date ranges in formats:
+    // "Nov. 28-Dec. 1, Dec. 13-14, Dec. 20-21"
+    // "Dec. 13-14"
+    // "Nov. 20-Dec. 24"
+    // Also handles pipe format for backwards compatibility: "Nov 29|Nov 30, Dec 5|Dec 7"
+    
     const dates = [];
     const monthMap = {
         'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
@@ -199,31 +229,116 @@ function parseMarketDates(dateString) {
     };
     
     try {
-        // Extract date ranges
-        const parts = dateString.toLowerCase().split(/and|,/).map(p => p.trim());
+        // Split by commas to get individual ranges
+        const ranges = dateString.split(',').map(r => r.trim());
         
-        for (const part of parts) {
-            const dayMatch = part.match(/(\d+)/g);
-            const monthMatch = part.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
-            
-            if (dayMatch && monthMatch) {
-                const month = monthMap[monthMatch[0].substring(0, 3).toLowerCase()];
-                const startDay = parseInt(dayMatch[0]);
-                const endDay = dayMatch[1] ? parseInt(dayMatch[1]) : startDay;
+        for (const range of ranges) {
+            // Check if this is pipe format (newer) or dash format (display format)
+            if (range.includes('|')) {
+                // Pipe format: "Nov 29|Nov 30"
+                const [startStr, endStr] = range.split('|').map(s => s.trim());
                 
-                // Create dates in Nov/Dec 2025
-                const year = month === 10 || month === 11 ? 2025 : 2025;
+                if (startStr && endStr) {
+                    const startDate = parseSimpleDate(startStr, monthMap);
+                    const endDate = parseSimpleDate(endStr, monthMap);
+                    
+                    if (startDate && endDate) {
+                        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                            dates.push(new Date(d));
+                        }
+                    }
+                }
+            } else if (range.includes('-')) {
+                // Dash format: "Nov. 28-Dec. 1" or "Dec. 13-14"
+                // Find the position of the dash that separates dates
+                const dashPos = range.lastIndexOf('-');
                 
-                for (let day = startDay; day <= endDay; day++) {
-                    dates.push(new Date(year, month, day));
+                if (dashPos > 0) {
+                    let startStr = range.substring(0, dashPos).trim();
+                    let endStr = range.substring(dashPos + 1).trim();
+                    
+                    // Parse start date (should have month and day)
+                    const startDate = parseDateWithMonth(startStr, monthMap);
+                    
+                    // Parse end date - might be just day if same month, or full date if different month
+                    let endDate = null;
+                    
+                    // First, try to parse as full date (Month. Day)
+                    endDate = parseDateWithMonth(endStr, monthMap);
+                    
+                    if (!endDate) {
+                        // If that didn't work, try to parse as just a day number
+                        const dayMatch = endStr.match(/(\d+)/);
+                        if (dayMatch && startDate) {
+                            const day = parseInt(dayMatch[1]);
+                            // Use the same month as start date
+                            endDate = new Date(2025, startDate.getMonth(), day);
+                        }
+                    }
+                    
+                    if (startDate && endDate) {
+                        console.log(`Parsing range: "${range}" -> ${startDate.toDateString()} to ${endDate.toDateString()}`);
+                        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                            dates.push(new Date(d));
+                        }
+                    } else {
+                        console.warn(`Could not parse range: "${range}"`);
+                    }
+                }
+            } else {
+                // Single date: "Nov. 28" or "Dec. 13"
+                const singleDate = parseDateWithMonth(range, monthMap);
+                if (singleDate) {
+                    dates.push(singleDate);
                 }
             }
         }
     } catch (e) {
-        console.warn('Could not parse dates:', dateString);
+        console.warn('Could not parse dates:', dateString, e);
     }
     
     return dates;
+}
+
+function parseDateWithMonth(dateStr, monthMap) {
+    // Parse format like "Nov. 28" or "Dec. 1" or "Dec 24"
+    // Handle both with and without periods
+    const match = dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+(\d+)/i);
+    if (match) {
+        const monthStr = match[1].toLowerCase().substring(0, 3);
+        const month = monthMap[monthStr];
+        const day = parseInt(match[2]);
+        
+        if (month !== undefined) {
+            return new Date(2025, month, day);
+        }
+    }
+    return null;
+}
+
+function getMonthFromString(dateStr, monthMap) {
+    // Extract month number from a date string
+    const match = dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
+    if (match) {
+        const monthStr = match[1].toLowerCase().substring(0, 3);
+        return monthMap[monthStr];
+    }
+    return null;
+}
+
+function parseSimpleDate(dateStr, monthMap) {
+    // Parse format like "Nov 29" or "Dec 5" (pipe format)
+    const match = dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s+(\d+)/i);
+    if (match) {
+        const monthStr = match[1].toLowerCase().substring(0, 3);
+        const month = monthMap[monthStr];
+        const day = parseInt(match[2]);
+        
+        if (month !== undefined) {
+            return new Date(2025, month, day);
+        }
+    }
+    return null;
 }
 
 // ============================================================================
@@ -244,16 +359,46 @@ function applyFilters() {
             market.address.toLowerCase().includes(state.currentFilters.search.toLowerCase()) ||
             market.description.toLowerCase().includes(state.currentFilters.search.toLowerCase());
         
-        const matchesRegion = 
-            !state.currentFilters.region || 
-            market.region === state.currentFilters.region;
+        const matchesCity = 
+            !state.currentFilters.city || 
+            market.city === state.currentFilters.city;
         
         let matchesDate = true;
         if (state.currentFilters.dateFilter) {
             matchesDate = marketIsOpenOnDate(market, state.currentFilters.dateFilter);
         }
         
-        return matchesSearch && matchesRegion && matchesDate;
+        return matchesSearch && matchesCity && matchesDate;
+    });
+    
+    // Sort the filtered results
+    sortFilteredMarkets();
+}
+
+function sortFilteredMarkets() {
+    state.filteredMarkets.sort((a, b) => {
+        let aVal, bVal;
+        
+        switch(state.sortColumn) {
+            case 'name':
+                aVal = a.name.toLowerCase();
+                bVal = b.name.toLowerCase();
+                break;
+            case 'date':
+                aVal = a.date.toLowerCase();
+                bVal = b.date.toLowerCase();
+                break;
+            case 'city':
+                aVal = a.city.toLowerCase();
+                bVal = b.city.toLowerCase();
+                break;
+            default:
+                return 0;
+        }
+        
+        if (aVal < bVal) return state.sortAscending ? -1 : 1;
+        if (aVal > bVal) return state.sortAscending ? 1 : -1;
+        return 0;
     });
 }
 
@@ -285,9 +430,13 @@ function marketIsOpenOnDate(market, dateFilter) {
 }
 
 function renderMarkers() {
-    Object.values(state.markers).forEach(m => state.map.removeLayer(m.marker));
+    console.log('🎯 Rendering markers for', state.filteredMarkets.length, 'markets');
+    
+    // Clear existing markers from cluster group
+    state.markerClusterGroup.clearLayers();
     state.markers = {};
     
+    // Add filtered markers to cluster group
     state.filteredMarkets.forEach(market => {
         const marker = L.marker(
             [market.lat, market.lon],
@@ -295,13 +444,18 @@ function renderMarkers() {
                 icon: createCustomIcon(market === state.selectedMarket),
                 title: market.name
             }
-        ).addTo(state.map);
+        );
         
-        marker.on('click', () => selectMarket(market));
+        marker.on('click', () => {
+            console.log('🗺️  Map marker clicked:', market.name);
+            selectMarket(market);
+        });
+        
+        state.markerClusterGroup.addLayer(marker);
         state.markers[market.name] = { marker, market };
     });
     
-    console.log('✅ Rendered', Object.keys(state.markers).length, 'markers');
+    console.log('✅ Markers rendered, total:', Object.keys(state.markers).length);
 }
 
 function createCustomIcon(isActive = false) {
@@ -309,9 +463,9 @@ function createCustomIcon(isActive = false) {
     return L.divIcon({
         html: html,
         className: '',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-        popupAnchor: [0, -18]
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14]
     });
 }
 
@@ -330,7 +484,7 @@ function renderTable() {
         row.innerHTML = `
             <td>${market.name}</td>
             <td>${market.date}</td>
-            <td>${market.region}</td>
+            <td>${market.city}</td>
         `;
         row.addEventListener('click', () => selectMarket(market));
         tbody.appendChild(row);
@@ -338,17 +492,18 @@ function renderTable() {
 }
 
 function updateResultsCount() {
-    document.getElementById('resultsCount').textContent = state.filteredMarkets.length;
+    // Removed - we're no longer showing the count in the header
 }
 
 function populateRegionFilter() {
-    const regions = [...new Set(state.markets.map(m => m.region))].sort();
-    const select = document.getElementById('regionFilter');
+    const cities = [...new Set(state.markets.map(m => m.city))].sort();
+    console.log('Cities found:', cities);
+    const select = document.getElementById('cityFilter');
     
-    regions.forEach(region => {
+    cities.forEach(city => {
         const option = document.createElement('option');
-        option.value = region;
-        option.textContent = region;
+        option.value = city;
+        option.textContent = city;
         select.appendChild(option);
     });
 }
@@ -386,7 +541,7 @@ function showDetails(market) {
     
     // Build content with new layout
     const html = `
-        <!-- Header row with date, cost, region -->
+        <!-- Header row with date, cost, city -->
         <div class="details-header-row">
             <div class="details-quick-info">
                 <span class="details-quick-info-label">Date</span>
@@ -397,8 +552,8 @@ function showDetails(market) {
                 <span class="details-quick-info-value">${market.cost}</span>
             </div>
             <div class="details-quick-info">
-                <span class="details-quick-info-label">Region</span>
-                <span class="details-quick-info-value">${market.region}</span>
+                <span class="details-quick-info-label">City</span>
+                <span class="details-quick-info-value">${market.city}</span>
             </div>
         </div>
         
@@ -432,7 +587,6 @@ function showDetails(market) {
 function generateCalendar(marketDates) {
     const calendarHTML = `
         <div class="date-calendar">
-            <div class="calendar-title">November & December 2025</div>
             <div class="calendar-months">
                 ${generateMonthCalendar(10, marketDates)}
                 ${generateMonthCalendar(11, marketDates)}
@@ -517,10 +671,25 @@ function setupEventListeners() {
         updateDisplay();
     });
     
-    // Region filter
-    document.getElementById('regionFilter').addEventListener('change', (e) => {
-        state.currentFilters.region = e.target.value;
+    // City filter
+    document.getElementById('cityFilter').addEventListener('change', (e) => {
+        state.currentFilters.city = e.target.value;
         updateDisplay();
+    });
+    
+    // Table column sorting
+    document.querySelectorAll('th.sortable').forEach(header => {
+        header.style.cursor = 'pointer';
+        header.addEventListener('click', () => {
+            const column = header.getAttribute('data-column');
+            if (state.sortColumn === column) {
+                state.sortAscending = !state.sortAscending;
+            } else {
+                state.sortColumn = column;
+                state.sortAscending = true;
+            }
+            updateDisplay();
+        });
     });
     
     // Quick filters
