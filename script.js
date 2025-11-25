@@ -176,14 +176,46 @@ function parseCSV(csv) {
 }
 
 function extractCityFromAddress(address) {
-    // Extract city from address format: "Street Address, City, State Zip"
-    // Find the part before the state abbreviation
-    const parts = address.split(',');
-    if (parts.length >= 2) {
-        // Usually city is the second-to-last part (before state)
-        const cityPart = parts[parts.length - 2].trim();
-        return cityPart;
+    // Extract city from various address formats:
+    // "Street Address, City, State Zip"
+    // "Street Address, City, CO Zip"
+    // "Place Name, Street Address, City, CO Zip"
+    // "Street Address, Denver, CO 80211"
+    
+    if (!address || address.trim() === '') return 'Unknown';
+    
+    const parts = address.split(',').map(p => p.trim());
+    
+    // Look for the part that contains a state abbreviation (CO, etc.)
+    // The city should be right before the state
+    for (let i = parts.length - 1; i >= 0; i--) {
+        const part = parts[i];
+        // Check if this part contains a state abbreviation (2 uppercase letters, possibly followed by zip)
+        if (/\b[A-Z]{2}\b\s*\d{5}/.test(part) || /^[A-Z]{2}$/.test(part)) {
+            // Found the state, city should be the previous part
+            if (i > 0) {
+                const cityPart = parts[i - 1];
+                // Validate it's not just a street address
+                if (cityPart && !cityPart.match(/^\d+\s/) && cityPart.length > 0) {
+                    return cityPart;
+                }
+            }
+            break;
+        }
     }
+    
+    // Fallback: if we have at least 2 parts, assume second-to-last is city
+    if (parts.length >= 2) {
+        const lastPart = parts[parts.length - 1];
+        // If last part looks like state+zip (e.g., "CO 80211"), city is second-to-last
+        if (/[A-Z]{2}\s*\d{5}/.test(lastPart) || /^[A-Z]{2}$/.test(lastPart)) {
+            const cityPart = parts[parts.length - 2].trim();
+            if (cityPart && !cityPart.match(/^\d+\s/) && cityPart.length > 0) {
+                return cityPart;
+            }
+        }
+    }
+    
     return 'Unknown';
 }
 
