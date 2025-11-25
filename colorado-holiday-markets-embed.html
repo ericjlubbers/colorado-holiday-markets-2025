@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorado Holiday Markets</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Martel:wght@400;700;900&display=swap');:root{--primary-color:#c41e3a;--primary-dark:#8b1528;--primary-light:#d9544f;--secondary-color:#4a7c59;--accent-color:#fcd232;--background-color:#f8f8f6;--surface-color:#ffffff;--text-primary:#2c2c2c;--text-secondary:#666666;--text-light:#999999;--border-color:#e0ddd8;--success-color:#4a7c59;--hover-bg:#fafaf8;--overlay-bg:rgba(0,0,0,0.5);--spacing-xs:0.25rem;--spacing-sm:0.5rem;--spacing-md:1rem;--spacing-lg:1.5rem;--spacing-xl:2rem;--font-family-sans:'Libre Franklin',sans-serif;--font-family-serif:'Martel',serif;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-xl:1.5rem;--font-size-xxl:2rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-bold:700;--shadow-sm:0 1px 3px rgba(0,0,0,0.08);--shadow-md:0 4px 12px rgba(0,0,0,0.12);--shadow-lg:0 12px 32px rgba(0,0,0,0.16);--shadow-xl:0 20px 48px rgba(0,0,0,0.2);--border-radius-sm:4px;--border-radius-md:8px;--border-radius-lg:12px;--border-radius-xl:16px;--transition-fast:150ms ease-in-out;--transition-normal:250ms ease-in-out;--transition-slow:350ms ease-in-out}*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;width:100%}body{font-family:var(--font-family-sans);color:var(--text-primary);background-color:var(--background-color);line-height:1.6}h1,h2,h3,h4,h5,h6{font-family:var(--font-family-serif);font-weight:900}.container{display:flex;flex-direction:column;height:100vh}.header{background:linear-gradient(135deg,var(--primary-color) 0%,var(--primary-dark) 100%);color:white;padding:var(--spacing-lg);flex-shrink:0}.header-content{display:flex;flex-direction:row;gap:var(--spacing-md);align-items:center;flex-wrap:wrap}.header h1{font-size:var(--font-size-xl);font-weight:900;margin:0;letter-spacing:-0.5px;font-family:var(--font-family-serif);white-space:nowrap;flex-shrink:0}.header .search-input{padding:var(--spacing-sm) var(--spacing-md);border:1px solid rgba(255,255,255,0.3);border-radius:var(--border-radius-md);font-size:var(--font-size-sm);font-family:var(--font-family-sans);background-color:rgba(255,255,255,0.95);color:var(--text-primary);transition:border-color var(--transition-fast);flex:1;min-width:200px}.header .search-input:focus{outline:none;border-color:white;box-shadow:0 0 0 2px rgba(255,255,255,0.2)}.header .search-input::placeholder{color:var(--text-light)}.main-content{display:flex;flex-direction:column;flex:1;overflow:hidden}.filters-bar{background-color:var(--surface-color);border-bottom:1px solid var(--border-color);padding:var(--spacing-md);flex-shrink:0;overflow-x:auto}.map-container{flex:1;overflow:hidden;position:relative;min-height:50vh}.map{width:100%;height:100%}.table-container{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:50vh;background-color:var(--surface-color);border-top:1px solid var(--border-color)}@media (min-width:1024px){.main-content{flex-direction:row}.map-container{flex:1;min-height:auto}.table-container{flex:1;min-height:auto;border-top:none;border-left:1px solid var(--border-color)}}.filters-content{display:flex;gap:var(--spacing-md);align-items:center;flex-wrap:wrap;font-size:var(--font-size-sm)}.search-section{flex:1;min-width:200px}.search-input{width:100%;padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-color);border-radius:var(--border-radius-md);font-size:var(--font-size-sm);font-family:var(--font-family-sans);transition:border-color var(--transition-fast)}.search-input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(196,30,58,0.1)}.filter-group{display:flex;gap:var(--spacing-sm);align-items:center}.filter-group label{font-weight:var(--font-weight-medium);color:var(--text-secondary);white-space:nowrap}.filter-select{padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-color);border-radius:var(--border-radius-md);font-size:var(--font-size-sm);font-family:var(--font-family-sans);background-color:white;cursor:pointer;transition:border-color var(--transition-fast)}.filter-select:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 2px rgba(196,30,58,0.1)}.quick-filter-btn{padding:var(--spacing-sm) var(--spacing-md);border:1px solid var(--border-color);background-color:white;border-radius:var(--border-radius-md);cursor:pointer;font-family:var(--font-family-sans);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);transition:all var(--transition-fast);white-space:nowrap}.quick-filter-btn:hover{border-color:var(--primary-color);color:var(--primary-color)}.quick-filter-btn.active{background-color:var(--primary-color);color:white;border-color:var(--primary-color)}.filter-spacer{flex:1}.reset-filters-link{margin-left:var(--spacing-md);padding-left:var(--spacing-md);border-left:1px solid var(--border-color);font-size:0.85rem;color:var(--text-secondary);text-decoration:underline;cursor:pointer;transition:color var(--transition-fast);white-space:nowrap;text-transform:uppercase;letter-spacing:0.5px;font-weight:var(--font-weight-medium)}.reset-filters-link:hover{color:var(--primary-color)}.results-section{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:var(--spacing-md)}.results-section h3{font-size:var(--font-size-base);margin-bottom:var(--spacing-md);color:var(--text-primary)}.table-wrapper{flex:1;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--border-radius-md)}.results-table{width:100%;border-collapse:collapse;font-size:var(--font-size-sm)}.results-table thead{background-color:var(--background-color);position:sticky;top:0;z-index:10}.results-table thead th{padding:var(--spacing-md);text-align:left;font-family:var(--font-family-serif);font-weight:700;color:var(--text-primary);border-bottom:2px solid var(--border-color)}.results-table tbody tr{border-bottom:1px solid var(--border-color);transition:background-color var(--transition-fast);cursor:pointer}.results-table tbody tr:hover{background-color:var(--hover-bg)}.results-table tbody tr.active{background-color:rgba(196,30,58,0.08)}.results-table tbody td{padding:var(--spacing-md)}.results-table tbody td:first-child{color:var(--primary-color);font-weight:var(--font-weight-medium)}.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background-color:var(--overlay-bg);z-index:1000;opacity:0;visibility:hidden;transition:opacity var(--transition-normal),visibility var(--transition-normal)}.modal-overlay.open{opacity:1;visibility:visible}.details-panel{position:fixed;bottom:0;left:50%;right:auto;width:500px;max-width:95vw;transform:translateY(100%) translateX(-50%);margin:0;max-height:90vh;background-color:var(--surface-color);border-radius:var(--border-radius-xl) var(--border-radius-xl) 0 0;z-index:1001;overflow-y:auto;transition:transform var(--transition-normal)}.details-panel.open{transform:translateY(0) translateX(-50%)}.modal-overlay.open+.details-panel{transform:translateY(0) translateX(-50%)}.details-header{padding:var(--spacing-lg);display:flex;justify-content:space-between;align-items:flex-start;position:relative;border-bottom:none}.close-btn{position:absolute;top:var(--spacing-md);right:var(--spacing-md);background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-secondary);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--border-radius-md);transition:background-color var(--transition-fast),color var(--transition-fast);padding:0}.close-btn:hover{background-color:var(--background-color);color:var(--text-primary)}.details-header h2{font-size:var(--font-size-xl);font-family:var(--font-family-serif);color:var(--primary-color);margin:0;padding-right:30px;line-height:1.3}.details-content{padding:var(--spacing-lg);padding-top:0}.details-header-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-md);margin-bottom:var(--spacing-lg)}.details-quick-info{text-align:center}.details-quick-info-label{display:block;font-size:0.75rem;font-weight:900;color:var(--primary-color);margin-bottom:var(--spacing-xs);text-transform:uppercase;letter-spacing:0.5px}.details-quick-info-value{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--text-primary)}.details-body-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-lg);margin-bottom:var(--spacing-lg)}.details-location-row,.details-description-row{margin-bottom:var(--spacing-lg)}.details-field{margin-bottom:0}.maps-link{display:inline-block;margin-top:var(--spacing-sm);font-size:0.85rem;color:var(--primary-color);text-decoration:underline;cursor:pointer;transition:color var(--transition-fast)}.maps-link:hover{color:#a01829}.details-field-label{display:block;font-size:0.75rem;font-weight:900;color:var(--primary-color);margin-bottom:var(--spacing-sm);text-transform:uppercase;letter-spacing:0.5px}.details-field-value{font-size:var(--font-size-sm);color:var(--text-primary);line-height:1.6}.details-date-string{font-size:var(--font-size-sm);color:var(--text-primary);margin-bottom:var(--spacing-lg)}.visit-website-btn{display:inline-block;padding:var(--spacing-sm) var(--spacing-md);background-color:var(--primary-color);color:white;border:none;border-radius:var(--border-radius-md);cursor:pointer;font-family:var(--font-family-sans);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);transition:background-color var(--transition-fast);text-decoration:none}.visit-website-btn:hover{background-color:var(--primary-dark)}.date-calendar{margin-top:var(--spacing-lg);padding:var(--spacing-md);background-color:var(--background-color);border-radius:var(--border-radius-lg)}.calendar-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-bold);text-align:center;margin-bottom:var(--spacing-md);color:var(--text-primary)}.calendar-months{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md)}.month-calendar{flex:1}.month-name{font-size:0.75rem;font-weight:var(--font-weight-bold);text-align:center;margin-bottom:var(--spacing-sm);color:var(--text-secondary)}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.calendar-day-header{font-size:0.65rem;font-weight:var(--font-weight-bold);text-align:center;color:var(--text-secondary);padding:var(--spacing-xs) 0;aspect-ratio:1;display:flex;align-items:center;justify-content:center}.calendar-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:var(--font-weight-regular);border-radius:var(--border-radius-sm);color:var(--text-secondary);cursor:default}.calendar-day.other-month{color:var(--text-light);opacity:0.3}.calendar-day.today{background-color:var(--accent-color);color:var(--primary-dark);font-weight:var(--font-weight-bold)}.calendar-day.highlight{background-color:var(--primary-color);color:white;font-weight:var(--font-weight-bold)}@media (max-width:768px){.details-header-row{grid-template-columns:1fr 1fr 1fr;gap:var(--spacing-sm);margin-bottom:var(--spacing-md)}.details-quick-info{text-align:center}.details-quick-info-label{margin-bottom:var(--spacing-xs)}.details-body-row{grid-template-columns:1fr;gap:var(--spacing-md)}.calendar-months{grid-template-columns:1fr 1fr}}.market-marker{background:var(--primary-color);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--transition-fast);box-shadow:var(--shadow-md);color:white}.market-marker:hover{width:36px;height:36px;box-shadow:var(--shadow-lg)}.market-marker.active{width:36px;height:36px;box-shadow:var(--shadow-xl)}.cluster-icon{background:var(--primary-color);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;box-shadow:var(--shadow-lg);font-size:14px;font-family:var(--font-family-sans)}.cluster-icon.cluster-small{width:32px;height:32px;font-size:12px}.cluster-icon.cluster-medium{width:40px;height:40px;font-size:14px}.cluster-icon.cluster-large{width:48px;height:48px;font-size:16px;background:linear-gradient(135deg,var(--primary-color) 0%,#a01829 100%)}.leaflet-popup-content-wrapper{border-radius:var(--border-radius-lg);box-shadow:var(--shadow-lg)}.leaflet-popup-content{margin:var(--spacing-sm) 0;font-family:var(--font-family-sans)}.leaflet-popup-content p{margin:var(--spacing-xs) 0;font-size:var(--font-size-sm)}@media (max-width:1023px){.main-content{flex-direction:column}.map-container{flex:1;min-height:40vh}.table-container{flex:1;min-height:40vh;border-left:none;border-top:1px solid var(--border-color)}.details-panel{max-width:100%;border-radius:var(--border-radius-xl) var(--border-radius-xl) 0 0}}@media (max-width:640px){.header h1{font-size:var(--font-size-lg)}.filters-bar{padding:var(--spacing-sm)}.filters-content{gap:var(--spacing-sm)}.search-section{min-width:100%;flex-basis:100%}.quick-filter-btn{padding:var(--spacing-sm) var(--spacing-md);font-size:0.75rem}.filter-select{padding:var(--spacing-sm) var(--spacing-sm);font-size:0.75rem}.results-table thead th,.results-table tbody td{padding:var(--spacing-sm);font-size:0.75rem}.details-panel{max-height:95vh}.details-header{padding:var(--spacing-md)}.details-header h2{font-size:var(--font-size-base)}.details-content{padding:var(--spacing-md)}.date-prominent{padding:var(--spacing-md)}.date-prominent-value{font-size:var(--font-size-base)}}.table-wrapper::-webkit-scrollbar,.details-panel::-webkit-scrollbar{width:8px}.table-wrapper::-webkit-scrollbar-track,.details-panel::-webkit-scrollbar-track{background:transparent}.table-wrapper::-webkit-scrollbar-thumb,.details-panel::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:4px}.table-wrapper::-webkit-scrollbar-thumb:hover,.details-panel::-webkit-scrollbar-thumb:hover{background:var(--text-light)}.no-results{text-align:center;padding:var(--spacing-lg);color:var(--text-light);font-size:var(--font-size-sm)}.loading{text-align:center;padding:var(--spacing-lg);color:var(--text-secondary)}.leaflet-container{font-family:var(--font-family-sans)}.leaflet-control-attribution{display:none}.leaflet-control{border-radius:var(--border-radius-md);box-shadow:var(--shadow-md)}
+    </style>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <!-- Leaflet Marker Clustering CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+</head>
+<body>
+<div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1>Colorado Holiday Markets</h1>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search markets..."
+                >
+            </div>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+            <div class="filters-content">
+                <div class="filter-group">
+                    <select id="cityFilter" class="filter-select">
+                        <option value="">All Cities</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Open:</label>
+                </div>
+
+                <button class="quick-filter-btn" id="todayBtn">Today</button>
+                <button class="quick-filter-btn" id="tomorrowBtn">Tomorrow</button>
+                <button class="quick-filter-btn" id="weekendBtn">This Weekend</button>
+                <a href="#" id="resetFiltersLink" class="reset-filters-link">Reset</a>
+            </div>
+        </div>
+
+        <!-- Main Content (Map + Table) -->
+        <div class="main-content">
+            <!-- Map Container -->
+            <div class="map-container">
+                <div id="map" class="map"></div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="results-section">
+                    <div class="table-wrapper">
+                        <table id="resultsTable" class="results-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-column="name">Name</th>
+                                    <th class="sortable" data-column="date">Date</th>
+                                    <th class="sortable" data-column="city">City</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay"></div>
+
+    <!-- Details Panel -->
+    <div id="detailsPanel" class="details-panel">
+        <div class="details-header">
+            <h2 id="detailsTitle">Market Name</h2>
+            <button class="close-btn" id="closeDetailsBtn">&times;</button>
+        </div>
+        <div class="details-content" id="detailsContent">
+            <!-- Content will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    
+    
+    <!-- Leaflet Marker Clustering JS -->
+    
+    
+    <!-- Leaflet MarkerCluster PlacementStrategies Plugin -->
+    
+    
+    <!-- Custom JS -->
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- Leaflet Marker Clustering JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+    <!-- App Script -->
+    <script>
+const CONFIG={SHEET_ID: '1OsQDhJXLwKmnybwNePIhnvgf2nrWH1E_8mv1NWc_ESw',MAP_CENTER:[39.0,-105.5],MAP_ZOOM: 7,MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=ac90b6e9-8eef-490e-8c0d-4005455f88a9',MAP_ATTRIBUTION: '',CSV_URL_TEMPLATE: 'https://docs.google.com/spreadsheets/d/{sheetId}/export?format=csv&gid=0'};
+const state={markets:[],filteredMarkets:[],selectedMarket: null,map: null,markerClusterGroup: null,markers:{},sortColumn: 'name',sortAscending: true,currentFilters:{search: '',city: '',dateFilter: ''},today: new Date(),tomorrow: new Date(Date.now()+ 86400000),weekendStart: null,weekendEnd: null};
+function calculateWeekendDates(){const today=new Date();
+const dayOfWeek=today.getDay();
+const daysUntilSaturday=(6 - dayOfWeek + 7)% 7 || 7;
+state.weekendStart=new Date(today.getTime()+ daysUntilSaturday * 86400000);
+state.weekendEnd=new Date(state.weekendStart.getTime()+ 86400000);}document.addEventListener('DOMContentLoaded',()=>{console.log('🎄 Colorado Holiday Markets - Initializing...');
+calculateWeekendDates();
+initializeMap();
+fetchAndProcessData();
+setupEventListeners();
+console.log('✅ Initialization complete');});
+function initializeMap(){console.log('🗺️ Initializing Leaflet map...');
+try{state.map=L.map('map').setView(CONFIG.MAP_CENTER,CONFIG.MAP_ZOOM);
+L.tileLayer(CONFIG.MAP_TILE_PROVIDER,{attribution: CONFIG.MAP_ATTRIBUTION,maxZoom: 18,minZoom: 5}).addTo(state.map);
+state.markerClusterGroup=L.markerClusterGroup({maxClusterRadius: 30,disableClusteringAtZoom: 13,spiderLegPolylineOptions:{weight: 2,color: '#c41e3a',opacity: 0.5},spiderfyDistanceMultiplier: 2,spiderfyDistanceSurplus: 40,animate: true,showCoverageOnHover: false,maxZoom: 18,iconCreateFunction: function(cluster){const count=cluster.getChildCount();
+let size='large';
+let icon='🎄';
+if(count < 10){size='small';}else if(count < 100){size='medium';}return L.divIcon({html: `<div class="cluster-icon cluster-${size}"><span>${count}</span></div>`,className: 'cluster',iconSize:[40,40]});}});
+state.map.addLayer(state.markerClusterGroup);
+console.log('✅ Map initialized with spiderfying clusters(circle layout)');}catch(error){console.error('❌ Error initializing map:',error);}}async function fetchAndProcessData(){try{showLoading('Fetching markets data...');
+console.log('📡 Fetching data from Google Sheet...');
+const csvUrl=CONFIG.CSV_URL_TEMPLATE.replace('{sheetId}',CONFIG.SHEET_ID);
+console.log('CSV URL:',csvUrl);
+const response=await fetch(csvUrl,{method: 'GET',headers:{'Accept': 'text/csv'}});
+console.log('📥 Fetch response status:',response.status,response.statusText);
+if(!response.ok){throw new Error(`Failed to fetch data: ${response.status}`);}const csv=await response.text();
+console.log('✅ CSV data received,length:',csv.length,'characters');
+if(!csv || csv.includes('<!DOCTYPE')|| csv.includes('<html')){console.error('❌ Received HTML instead of CSV - likely a redirect or auth page');
+throw new Error('Google Sheets returned HTML instead of CSV. Make sure the sheet is publicly accessible.');}state.markets=parseCSV(csv);
+console.log(`✅ Parsed ${state.markets.length}markets`);
+if(state.markets.length > 0){console.log('📍 First market:',state.markets[0]);}populateRegionFilter();
+updateDisplay();}catch(error){console.error('❌ Error fetching data:',error);
+showError('Unable to load market data. Please refresh the page. If the error persists,ensure the Google Sheet is publicly accessible(View Only).');}}function parseCSV(csv){const lines=csv.trim().split('\n');
+if(lines.length < 2)return[];
+const headers=parseCSVLine(lines[0]);
+const markets=[];
+for(let i=1;
+i < lines.length;
+i++){const values=parseCSVLine(lines[i]);
+if(values.length < 3 || !values[0].trim())continue;
+const address=values[5]?.trim()|| '';
+const city=extractCityFromAddress(address);
+const market={name: values[0]?.trim()|| '',lat: parseFloat(values[1])|| null,lon: parseFloat(values[2])|| null,region: values[3]?.trim()|| 'Unknown',city: city,zipCode: values[4]?.trim()|| '',address: address,date: values[6]?.trim()|| '',cost: values[7]?.trim()|| 'Free',website: values[8]?.trim()|| '',description: values[9]?.trim()|| ''};
+if(market.lat !==null && market.lon !==null){market.dates=parseMarketDates(market.date);
+markets.push(market);}}return markets;}function extractCityFromAddress(address){if(!address || address.trim()==='')return 'Unknown';
+const parts=address.split(',').map(p=> p.trim());
+for(let i=parts.length - 1;
+i >=0;
+i--){const part=parts[i];
+if(/\b[A-Z]{2}\b\s*\d{5}/.test(part)|| /^[A-Z]{2}$/.test(part)){if(i > 0){const cityPart=parts[i - 1];
+if(cityPart && !cityPart.match(/^\d+\s/)&& cityPart.length > 0){return cityPart;}}break;}}if(parts.length >=2){const lastPart=parts[parts.length - 1];
+if(/[A-Z]{2}\s*\d{5}/.test(lastPart)|| /^[A-Z]{2}$/.test(lastPart)){const cityPart=parts[parts.length - 2].trim();
+if(cityPart && !cityPart.match(/^\d+\s/)&& cityPart.length > 0){return cityPart;}}}return 'Unknown';}function parseCSVLine(line){const result=[];
+let current='';
+let insideQuotes=false;
+for(let i=0;
+i < line.length;
+i++){const char=line[i];
+const nextChar=line[i + 1];
+if(char==='"'){if(insideQuotes && nextChar==='"'){current +='"';
+i++;}else{insideQuotes=!insideQuotes;}}else if(char===',' && !insideQuotes){result.push(current);
+current='';}else{current +=char;}}result.push(current);
+return result;}function parseMarketDates(dateString){const dates=[];
+const monthMap={'jan': 0,'feb': 1,'mar': 2,'apr': 3,'may': 4,'jun': 5,'jul': 6,'aug': 7,'sep': 8,'oct': 9,'nov': 10,'dec': 11};
+try{const ranges=dateString.split(',').map(r=> r.trim());
+for(const range of ranges){if(range.includes('|')){const[startStr,endStr]=range.split('|').map(s=> s.trim());
+if(startStr && endStr){const startDate=parseSimpleDate(startStr,monthMap);
+const endDate=parseSimpleDate(endStr,monthMap);
+if(startDate && endDate){for(let d=new Date(startDate);
+d <=endDate;
+d.setDate(d.getDate()+ 1)){dates.push(new Date(d));}}}}else if(range.includes('-')){const dashPos=range.lastIndexOf('-');
+if(dashPos > 0){let startStr=range.substring(0,dashPos).trim();
+let endStr=range.substring(dashPos + 1).trim();
+const startDate=parseDateWithMonth(startStr,monthMap);
+let endDate=null;
+endDate=parseDateWithMonth(endStr,monthMap);
+if(!endDate){const dayMatch=endStr.match(/(\d+)/);
+if(dayMatch && startDate){const day=parseInt(dayMatch[1]);
+endDate=new Date(2025,startDate.getMonth(),day);}}if(startDate && endDate){console.log(`Parsing range: "${range}" -> ${startDate.toDateString()}to ${endDate.toDateString()}`);
+for(let d=new Date(startDate);
+d <=endDate;
+d.setDate(d.getDate()+ 1)){dates.push(new Date(d));}}else{console.warn(`Could not parse range: "${range}"`);}}}else{const singleDate=parseDateWithMonth(range,monthMap);
+if(singleDate){dates.push(singleDate);}}}}catch(e){console.warn('Could not parse dates:',dateString,e);}return dates;}function parseDateWithMonth(dateStr,monthMap){const match=dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+(\d+)/i);
+if(match){const monthStr=match[1].toLowerCase().substring(0,3);
+const month=monthMap[monthStr];
+const day=parseInt(match[2]);
+if(month !==undefined){return new Date(2025,month,day);}}return null;}function getMonthFromString(dateStr,monthMap){const match=dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i);
+if(match){const monthStr=match[1].toLowerCase().substring(0,3);
+return monthMap[monthStr];}return null;}function parseSimpleDate(dateStr,monthMap){const match=dateStr.match(/(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s+(\d+)/i);
+if(match){const monthStr=match[1].toLowerCase().substring(0,3);
+const month=monthMap[monthStr];
+const day=parseInt(match[2]);
+if(month !==undefined){return new Date(2025,month,day);}}return null;}function updateDisplay(){applyFilters();
+renderMarkers();
+renderTable();
+updateResultsCount();}function applyFilters(){state.filteredMarkets=state.markets.filter(market=>{const matchesSearch=market.name.toLowerCase().includes(state.currentFilters.search.toLowerCase())|| market.address.toLowerCase().includes(state.currentFilters.search.toLowerCase())|| market.description.toLowerCase().includes(state.currentFilters.search.toLowerCase());
+const matchesCity=!state.currentFilters.city ||  market.city===state.currentFilters.city;
+let matchesDate=true;
+if(state.currentFilters.dateFilter){matchesDate=marketIsOpenOnDate(market,state.currentFilters.dateFilter);}return matchesSearch && matchesCity && matchesDate;});
+sortFilteredMarkets();}function sortFilteredMarkets(){state.filteredMarkets.sort((a,b)=>{let aVal,bVal;
+switch(state.sortColumn){case 'name': aVal=a.name.toLowerCase();
+bVal=b.name.toLowerCase();
+break;
+case 'date': aVal=a.date.toLowerCase();
+bVal=b.date.toLowerCase();
+break;
+case 'city': aVal=a.city.toLowerCase();
+bVal=b.city.toLowerCase();
+break;
+default: return 0;}if(aVal < bVal)return state.sortAscending ? -1 : 1;
+if(aVal > bVal)return state.sortAscending ? 1 : -1;
+return 0;});}function marketIsOpenOnDate(market,dateFilter){if(!market.dates || market.dates.length===0)return true;
+let targetDate;
+if(dateFilter==='today'){targetDate=new Date(state.today.getFullYear(),state.today.getMonth(),state.today.getDate());}else if(dateFilter==='tomorrow'){targetDate=new Date(state.tomorrow.getFullYear(),state.tomorrow.getMonth(),state.tomorrow.getDate());}else if(dateFilter==='weekend'){const dates=[];
+for(let d=new Date(state.weekendStart);
+d <=state.weekendEnd;
+d.setDate(d.getDate()+ 1)){dates.push(new Date(d));}return dates.some(d=> market.dates.some(md=>  md.getFullYear()===d.getFullYear()&&  md.getMonth()===d.getMonth()&&  md.getDate()===d.getDate()));}return market.dates.some(d=>  d.getFullYear()===targetDate.getFullYear()&&  d.getMonth()===targetDate.getMonth()&&  d.getDate()===targetDate.getDate());}function renderMarkers(){console.log('🎯 Rendering markers for',state.filteredMarkets.length,'markets');
+state.markerClusterGroup.clearLayers();
+state.markers={};
+state.filteredMarkets.forEach(market=>{const marker=L.marker([market.lat,market.lon],{icon: createCustomIcon(market===state.selectedMarket),title: market.name});
+marker.on('click',()=>{console.log('🗺️ Map marker clicked:',market.name);
+selectMarket(market);});
+state.markerClusterGroup.addLayer(marker);
+state.markers[market.name]={marker,market};});
+if(state.filteredMarkets.length > 0){setTimeout(()=>{try{const bounds=state.markerClusterGroup.getBounds();
+if(bounds.isValid()){state.map.fitBounds(bounds,{padding:[50,50]});}}catch(e){console.warn('Could not fit bounds:',e);}},100);}console.log('✅ Markers rendered,total:',Object.keys(state.markers).length);}function createCustomIcon(isActive=false){const html=`<div class="market-marker ${isActive ? 'active' : ''}">❄️</div>`;
+return L.divIcon({html: html,className: '',iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-14]});}function renderTable(){const tbody=document.getElementById('resultsTableBody');
+tbody.innerHTML='';
+if(state.filteredMarkets.length===0){tbody.innerHTML='<tr><td colspan="3" class="no-results">No markets found</td></tr>';
+return;}state.filteredMarkets.forEach(market=>{const row=document.createElement('tr');
+row.className=market===state.selectedMarket ? 'active' : '';
+row.innerHTML=` <td>${market.name}</td> <td>${market.date}</td> <td>${market.city}</td> `;
+row.addEventListener('click',()=> selectMarket(market));
+tbody.appendChild(row);});}function updateResultsCount(){}function populateRegionFilter(){const cities=[...new Set(state.markets.map(m=> m.city))].sort();
+console.log('Cities found:',cities);
+const select=document.getElementById('cityFilter');
+cities.forEach(city=>{const option=document.createElement('option');
+option.value=city;
+option.textContent=city;
+select.appendChild(option);});}function selectMarket(market){console.log('📍 Selecting market:',market.name);
+state.selectedMarket=market;
+renderMarkers();
+state.map.setView([market.lat,market.lon],12,{animate: true});
+document.querySelectorAll('#resultsTable tbody tr').forEach(row=>{row.classList.remove('active');
+if(row.cells[0].textContent===market.name){row.classList.add('active');}});
+showDetails(market);}function showDetails(market){const overlay=document.getElementById('modalOverlay');
+const panel=document.getElementById('detailsPanel');
+document.getElementById('detailsTitle').textContent=market.name;
+const calendar=generateCalendar(market.dates ||[]);
+const mapsQuery=encodeURIComponent(market.address);
+const googlemapsUrl=`https://www.google.com/maps/search/${mapsQuery}`;
+const html=` <!-- Header row with date,cost,city --> <div class="details-header-row"> <div class="details-quick-info"> <span class="details-quick-info-label">Date</span> <span class="details-quick-info-value">${market.date}</span> </div> <div class="details-quick-info"> <span class="details-quick-info-label">Cost</span> <span class="details-quick-info-value">${market.cost}</span> </div> <div class="details-quick-info"> <span class="details-quick-info-label">City</span> <span class="details-quick-info-value">${market.city}</span> </div> </div> <!-- Location row --> <div class="details-location-row"> <div class="details-field"> <span class="details-field-label">Location</span> <div class="details-field-value"> ${market.address}</div> <a href="${googlemapsUrl}" target="_blank" rel="noopener noreferrer" class="maps-link"> View on Google Maps </a> </div> </div> <!-- Description row --> <div class="details-description-row"> <div class="details-field"> <span class="details-field-label">Description</span> <div class="details-field-value"> ${market.description}${market.website ? `<div style="margin-top: var(--spacing-md);"><a href="${market.website}" target="_blank" rel="noopener noreferrer" class="visit-website-btn">Visit Website</a></div>` : ''}</div> </div> </div> <!-- Calendar --> ${calendar}`;
+document.getElementById('detailsContent').innerHTML=html;
+overlay.classList.add('open');
+panel.classList.add('open');}function generateCalendar(marketDates){const calendarHTML=` <div class="date-calendar"> <div class="calendar-months"> ${generateMonthCalendar(10,marketDates)}${generateMonthCalendar(11,marketDates)}</div> </div> `;
+return calendarHTML;}function generateMonthCalendar(month,marketDates){const monthNames=['November','December'];
+const year=2025;
+const firstDay=new Date(year,month,1);
+const lastDay=new Date(year,month + 1,0);
+const startDate=new Date(firstDay);
+startDate.setDate(startDate.getDate()- firstDay.getDay());
+let html=`<div class="month-calendar">`;
+html +=`<div class="month-name">${monthNames[month===10 ? 0 : 1]}</div>`;
+html +=`<div class="calendar-grid">`;
+const dayHeaders=['S','M','T','W','T','F','S'];
+dayHeaders.forEach(day=>{html +=`<div class="calendar-day-header">${day}</div>`;});
+let currentDate=new Date(startDate);
+const monthEnd=new Date(year,month + 1,0);
+while(currentDate <=monthEnd || currentDate.getDay()!==0){const classes=[];
+if(currentDate.getMonth()!==month){classes.push('other-month');}const isMarketDate=marketDates.some(d=>  d.getFullYear()===currentDate.getFullYear()&&  d.getMonth()===currentDate.getMonth()&&  d.getDate()===currentDate.getDate());
+if(isMarketDate){classes.push('highlight');}if(currentDate.toDateString()===state.today.toDateString()){classes.push('today');}html +=`<div class="calendar-day ${classes.join(' ')}">${currentDate.getDate()}</div>`;
+currentDate.setDate(currentDate.getDate()+ 1);}html +=`</div></div>`;
+return html;}function closeDetails(){console.log('❌ Closing details');
+document.getElementById('modalOverlay').classList.remove('open');
+document.getElementById('detailsPanel').classList.remove('open');
+state.selectedMarket=null;
+renderMarkers();
+document.querySelectorAll('#resultsTable tbody tr').forEach(row=>{row.classList.remove('active');});}function setupEventListeners(){console.log('⚙️ Setting up event listeners...');
+document.getElementById('searchInput').addEventListener('input',(e)=>{state.currentFilters.search=e.target.value;
+updateDisplay();});
+document.getElementById('cityFilter').addEventListener('change',(e)=>{state.currentFilters.city=e.target.value;
+updateDisplay();});
+document.querySelectorAll('th.sortable').forEach(header=>{header.style.cursor='pointer';
+header.addEventListener('click',()=>{const column=header.getAttribute('data-column');
+if(state.sortColumn===column){state.sortAscending=!state.sortAscending;}else{state.sortColumn=column;
+state.sortAscending=true;}updateDisplay();});});
+document.getElementById('todayBtn').addEventListener('click',()=>{toggleQuickFilter('today',document.getElementById('todayBtn'));});
+document.getElementById('tomorrowBtn').addEventListener('click',()=>{toggleQuickFilter('tomorrow',document.getElementById('tomorrowBtn'));});
+document.getElementById('weekendBtn').addEventListener('click',()=>{toggleQuickFilter('weekend',document.getElementById('weekendBtn'));});
+document.getElementById('resetFiltersLink').addEventListener('click',(e)=>{e.preventDefault();
+document.getElementById('searchInput').value='';
+document.getElementById('cityFilter').value='';
+document.querySelectorAll('.quick-filter-btn').forEach(btn=> btn.classList.remove('active'));
+state.currentFilters={search: '',city: '',dateFilter: ''};
+updateDisplay();});
+document.getElementById('closeDetailsBtn').addEventListener('click',closeDetails);
+document.getElementById('modalOverlay').addEventListener('click',closeDetails);
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeDetails();});
+console.log('✅ Event listeners set up');}function toggleQuickFilter(filter,button){if(state.currentFilters.dateFilter===filter){state.currentFilters.dateFilter='';
+button.classList.remove('active');}else{document.querySelectorAll('.quick-filter-btn').forEach(btn=> btn.classList.remove('active'));
+state.currentFilters.dateFilter=filter;
+button.classList.add('active');}updateDisplay();}function showLoading(message){const tbody=document.getElementById('resultsTableBody');
+tbody.innerHTML=`<tr><td colspan="3" class="loading">${message}</td></tr>`;}function showError(message){const tbody=document.getElementById('resultsTableBody');
+tbody.innerHTML=`<tr><td colspan="3" class="no-results">${message}</td></tr>`;}
+    </script>
+</body>
+</html>
