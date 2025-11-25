@@ -6,7 +6,7 @@ const CONFIG = {
     SHEET_ID: '1OsQDhJXLwKmnybwNePIhnvgf2nrWH1E_8mv1NWc_ESw',
     MAP_CENTER: [39.0, -105.5],
     MAP_ZOOM: 7,
-    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+    MAP_TILE_PROVIDER: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=ac90b6e9-8eef-490e-8c0d-4005455f88a9',
     MAP_ATTRIBUTION: '',
     // Direct export URL - no proxy needed
     CSV_URL_TEMPLATE: 'https://docs.google.com/spreadsheets/d/{sheetId}/export?format=csv&gid=0'
@@ -74,13 +74,50 @@ function initializeMap() {
         }).addTo(state.map);
         
         // Initialize marker cluster group
+        // Using standard Leaflet.MarkerCluster spiderfication (circle layout)
         state.markerClusterGroup = L.markerClusterGroup({
-            maxClusterRadius: 50,
-            disableClusteringAtZoom: 15
+            // Only cluster markers that are very close together
+            maxClusterRadius: 20,
+            // Disable clustering at zoom level 13+
+            disableClusteringAtZoom: 13,
+            // Spiderfication options for the circle layout
+            spiderLegPolylineOptions: {
+                weight: 2,
+                color: '#c41e3a',
+                opacity: 0.5
+            },
+            // More distance between spiderfied markers = larger circle
+            spiderfyDistanceMultiplier: 2,
+            // Distance added to each circle radius
+            spiderfyDistanceSurplus: 40,
+            // Animation when spiderfying
+            animate: true,
+            // Show coverage when hovering clusters
+            showCoverageOnHover: false,
+            // Max zoom for clustering
+            maxZoom: 18,
+            // Use the default marker cluster icon
+            iconCreateFunction: function(cluster) {
+                const count = cluster.getChildCount();
+                let size = 'large';
+                let icon = '🎄';
+                
+                if (count < 10) {
+                    size = 'small';
+                } else if (count < 100) {
+                    size = 'medium';
+                }
+                
+                return L.divIcon({
+                    html: `<div class="cluster-icon cluster-${size}"><span>${count}</span></div>`,
+                    className: 'cluster',
+                    iconSize: [40, 40]
+                });
+            }
         });
         state.map.addLayer(state.markerClusterGroup);
         
-        console.log('✅ Map initialized with clustering');
+        console.log('✅ Map initialized with spiderfying clusters (circle layout)');
     } catch (error) {
         console.error('❌ Error initializing map:', error);
     }
@@ -486,6 +523,20 @@ function renderMarkers() {
         state.markerClusterGroup.addLayer(marker);
         state.markers[market.name] = { marker, market };
     });
+    
+    // Fit map bounds to filtered markers if any exist
+    if (state.filteredMarkets.length > 0) {
+        setTimeout(() => {
+            try {
+                const bounds = state.markerClusterGroup.getBounds();
+                if (bounds.isValid()) {
+                    state.map.fitBounds(bounds, { padding: [50, 50] });
+                }
+            } catch (e) {
+                console.warn('Could not fit bounds:', e);
+            }
+        }, 100);
+    }
     
     console.log('✅ Markers rendered, total:', Object.keys(state.markers).length);
 }
