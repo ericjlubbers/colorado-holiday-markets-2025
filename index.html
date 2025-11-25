@@ -3,766 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colorado Holiday Markets 2025</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Martel:wght@300;400;600;700&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Libre Franklin', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #d43e1f;
-        }
-        
-        h1, h2, h3, h4 {
-            font-family: 'Martel', serif;
-        }
-        
-        h1 {
-            color: #d43e1f;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-        
-        .subtitle {
-            color: #666;
-            font-size: 1.2em;
-            font-weight: 400;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .map-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            min-height: 500px;
-        }
-        
-        #map {
-            width: 100%;
-            height: 500px;
-            background: #e9ecef;
-            border-radius: 8px;
-        }
-        
-        .controls {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        
-        .controls h3 {
-            color: #d43e1f;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .filter-group {
-            margin-bottom: 20px;
-        }
-        
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        .filter-group select,
-        .filter-group input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: #d43e1f;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #d43e1f;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        button:hover {
-            background: #b3341a;
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        thead {
-            background: #d43e1f;
-        }
-        
-        th {
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-        
-        tbody tr:hover {
-            background: #f8f8f8;
-        }
-        
-        tbody tr.selected {
-            background: #ffe6e1;
-        }
-        
-        td {
-            padding: 15px;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        .details-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            display: none;
-        }
-        
-        .details-container.active {
-            display: block;
-        }
-        
-        .details-container h3 {
-            color: #d43e1f;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-            font-weight: 600;
-        }
-        
-        .detail-item {
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .detail-item:last-child {
-            border-bottom: none;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: #555;
-            display: inline-block;
-            width: 100px;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        .tooltip {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            pointer-events: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            font-size: 14px;
-            max-width: 300px;
-            z-index: 1000;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        a {
-            color: #d43e1f;
-            text-decoration: none;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        a:hover {
-            text-decoration: underline;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #d43e1f;
-            font-family: 'Martel', serif;
-        }
-        
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            font-family: 'Libre Franklin', sans-serif;
-        }
-        
-        .county-boundary {
-            fill: none;
-            stroke: #ccc;
-            stroke-width: 0.5;
-            opacity: 0.6;
-        }
-        
-        .county-label {
-            font-size: 8px;
-            fill: #888;
-            pointer-events: none;
-            font-family: 'Libre Franklin', sans-serif;
-            text-anchor: middle;
-        }
-    </style>
+    <title>Colorado Holiday Markets</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🎄 Colorado Holiday Markets 2025</h1>
-            <p class="subtitle">Discover festive markets across Colorado this holiday season</p>
-        </header>
-
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="total-markets">5</div>
-                <div class="stat-label">Total Markets</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="free-markets">5</div>
-                <div class="stat-label">Free Entry</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="denver-markets">3</div>
-                <div class="stat-label">In Denver Area</div>
-            </div>
+        <!-- Header -->
+        <div class="header">
+            <h1>Colorado Holiday Markets</h1>
         </div>
 
-        <div class="dashboard">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Map Container -->
             <div class="map-container">
-                <div id="map"></div>
+                <div id="map" class="map"></div>
             </div>
-            
-            <div class="controls">
-                <h3>Filter Markets</h3>
-                
-                <div class="filter-group">
-                    <label for="date-filter">Date Range</label>
-                    <select id="date-filter">
-                        <option value="all">All Dates</option>
-                        <option value="nov">November Markets</option>
-                        <option value="dec">December Markets</option>
-                    </select>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <!-- Filters Bar -->
+                <div class="filters-bar">
+                    <div class="filters-content">
+                        <div class="search-section">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="search-input" 
+                                placeholder="Search markets..."
+                            >
+                        </div>
+                        
+                        <div class="filter-group">
+                            <select id="regionFilter" class="filter-select">
+                                <option value="">All Regions</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Open:</label>
+                        </div>
+
+                        <button class="quick-filter-btn" id="todayBtn">Today</button>
+                        <button class="quick-filter-btn" id="tomorrowBtn">Tomorrow</button>
+                        <button class="quick-filter-btn" id="weekendBtn">This Weekend</button>
+                    </div>
                 </div>
-                
-                <div class="filter-group">
-                    <label for="cost-filter">Cost</label>
-                    <select id="cost-filter">
-                        <option value="all">All Markets</option>
-                        <option value="free">Free Entry Only</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="search">Search Markets</label>
-                    <input type="text" id="search" placeholder="Type market name or location...">
-                </div>
-                
-                <div class="filter-group">
-                    <button id="reset-filters">Reset All Filters</button>
-                </div>
-                
-                <div class="filter-group">
-                    <h4>Selected Market</h4>
-                    <select id="market-selector">
-                        <option value="">Click a point or table row</option>
-                    </select>
+
+                <!-- Results Table -->
+                <div class="results-section">
+                    <h3>Markets (<span id="resultsCount">0</span>)</h3>
+                    <div class="table-wrapper">
+                        <table id="resultsTable" class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Region</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="table-container">
-            <table id="market-table">
-                <thead>
-                    <tr>
-                        <th>Market Name</th>
-                        <th>Dates</th>
-                        <th>Location</th>
-                        <th>Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Table rows will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-
-        <div id="market-details" class="details-container">
-            <!-- Market details will be populated when a market is selected -->
         </div>
     </div>
 
-    <script>
-        // Market data - first 5 entries
-        const marketData = [
-            {
-                "Name": "MCA Holiday Makers Market",
-                "Latitude": 39.76213369,
-                "lon": -105.0202682,
-                "Icon": "snowflake",
-                "Color": "#d43e1f",
-                "Date": "Dec. 13-14",
-                "Zip code": "80211",
-                "Address": "MCA Denver at the Holiday, 2644 W 32nd Ave., Denver, CO 80211",
-                "Cost": "Free",
-                "Description": "Seasonal cocktails, gift wrapping, and handmade goods from local makers.",
-                "Website": "https://mcadenver.org/events/holiday-makers-market-2025"
-            },
-            {
-                "Name": "Mistletoe Market",
-                "Latitude": 39.75338279,
-                "lon": -104.9968463,
-                "Icon": "snowflake",
-                "Color": "#d43e1f",
-                "Date": "Dec. 13-14 and 20-21",
-                "Zip code": "80202",
-                "Address": "1800 Wazee St, Denver, CO 80202",
-                "Cost": "Free",
-                "Description": "Pop-up shops from more than 40 local vendors, cookie decorating and wreath building stations, and live music.",
-                "Website": "https://dairyblock.com/events/mistletoe-market-5-2/"
-            },
-            {
-                "Name": "Cherry Creek Holiday Market",
-                "Latitude": 39.7187592,
-                "lon": -104.9537025,
-                "Icon": "snowflake",
-                "Color": "#d43e1f",
-                "Date": "Nov. 20-Dec. 24",
-                "Zip code": "80206",
-                "Address": "105 Fillmore St, Denver, CO 80206",
-                "Cost": "Free",
-                "Description": "For a full month The Cherry Creek Holiday Market sets up shop at Fillmore Plaza with semi-permanent booths open daily to the public, a concert series and the popular Mistletoe Lounge serving festive cocktails.",
-                "Website": "https://www.cherrycreekholidaymarket.com/"
-            },
-            {
-                "Name": "Denver Christkindlmarket",
-                "Latitude": 39.74578476,
-                "lon": -105.004527,
-                "Icon": "snowflake",
-                "Color": "#d43e1f",
-                "Date": "Nov. 21-Dec. 23",
-                "Zip code": "",
-                "Address": "Auraria Campus, Tivoli Quad 1000 Larimer St, Denver",
-                "Cost": "Free",
-                "Description": "A proper German-style holiday market celebrating its 25th anniversary. The market has moved this year to dodge construction in Civic Center Park, and will be located on Tivoli Quad at the Auraria Campus, beside the Tivoli Union building built by German brewer Moritz Sigi in 1870.",
-                "Website": "https://www.christkindlmarketdenver.com/"
-            },
-            {
-                "Name": "Howliday Market",
-                "Latitude": 39.5865009,
-                "lon": -105.0237441,
-                "Icon": "snowflake",
-                "Color": "#d43e1f",
-                "Date": "Dec. 12-23",
-                "Zip code": "",
-                "Address": "Aspen Grove Mall, 7301 S. Santa Fe Dr., Littleton",
-                "Cost": "Free",
-                "Description": "A holiday market for all the good boys and girls, with more than 20 pet-focused vendors, a dog sweater contest and Santa Paws Photos for a Cause, a ticketed add-on with proceeds going to two local animal rescues.",
-                "Website": "https://aspengrovecenter.com/event/howliday-dog-market/"
-            }
-        ];
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay"></div>
 
-        // County data (sample - you'll add all 65 counties)
-        const countyData = [
-            {
-                "geometry": {"type":"Polygon","coordinates":[[[-105.052892,39.914224],[-105.053246,39.791063],[-104.960268,39.790966],[-104.940476,39.794601],[-104.927002,39.783778],[-104.903438,39.783808],[-104.903561,39.798391],[-104.884627,39.798321],[-104.884585,39.812975],[-104.866075,39.812986],[-104.866041,39.798386],[-104.790895,39.798251],[-104.790859,39.841802],[-104.762279,39.84539],[-104.732138,39.845086],[-104.73155,39.898611],[-104.705568,39.89849],[-104.705375,39.906418],[-104.633858,39.906067],[-104.633969,39.899289],[-104.600435,39.899459],[-104.605791,39.873827],[-104.619841,39.873767],[-104.619938,39.822421],[-104.76247,39.82298],[-104.762606,39.798433],[-104.734399,39.798442],[-104.734601,39.769181],[-104.764576,39.769391],[-104.781727,39.773387],[-104.828229,39.773174],[-104.832961,39.766195],[-104.856523,39.768391],[-104.856431,39.758387],[-104.879901,39.754607],[-104.884646,39.740156],[-104.659953,39.740477],[-104.526958,39.738669],[-104.394586,39.73804],[-104.209525,39.739018],[-103.972303,39.740401],[-103.706547,39.739894],[-103.705701,40.001366],[-103.8661,40.001233],[-104.150332,40.000856],[-104.37683,40.000739],[-104.60186,40.000529],[-104.961405,40.000337],[-104.980944,40.000325],[-104.997423,39.981213],[-105.015845,39.981193],[-105.015469,39.921402],[-105.034395,39.921305],[-105.052892,39.914224]]]},
-                "County": "Adams"
-            },
-            {
-                "geometry": {"type":"Polygon","coordinates":[[[-106.038413,37.748353],[-106.039299,37.576986],[-106.039331,37.400852],[-106.038912,37.356953],[-105.984566,37.356269],[-105.743339,37.356798],[-105.597019,37.480175],[-105.496201,37.564289],[-105.485516,37.577899],[-105.494683,37.585542],[-105.493273,37.600919],[-105.498602,37.614137],[-105.491513,37.625003],[-105.486976,37.653483],[-105.477242,37.666199],[-105.481374,37.693755],[-105.477302,37.707686],[-105.454245,37.723951],[-105.457255,37.751464],[-105.497979,37.751003],[-105.617269,37.752306],[-105.882491,37.749492],[-106.038413,37.748353]]]},
-                "County": "Alamosa"
-            }
-            // Add the remaining 63 counties here following the same format
-        ];
+    <!-- Details Panel -->
+    <div id="detailsPanel" class="details-panel">
+        <div class="details-header">
+            <h2 id="detailsTitle">Market Name</h2>
+            <button class="close-btn" id="closeDetailsBtn">&times;</button>
+        </div>
+        <div class="details-content" id="detailsContent">
+            <!-- Content will be inserted here -->
+        </div>
+    </div>
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-
-        function initializeApp() {
-            updateStats();
-            initializeMap();
-            initializeTable();
-            initializeFilters();
-            populateMarketSelector();
-        }
-
-        function updateStats() {
-            document.getElementById('total-markets').textContent = marketData.length;
-            
-            const freeMarkets = marketData.filter(market => market.Cost.toLowerCase().includes('free')).length;
-            document.getElementById('free-markets').textContent = freeMarkets;
-            
-            const denverMarkets = marketData.filter(market => 
-                market.Address.toLowerCase().includes('denver') || 
-                market.Address.toLowerCase().includes('littleton')
-            ).length;
-            document.getElementById('denver-markets').textContent = denverMarkets;
-        }
-
-        function initializeMap() {
-            const width = document.getElementById('map').clientWidth;
-            const height = 500;
-            const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-
-            // Create SVG
-            const svg = d3.select("#map")
-                .append("svg")
-                .attr("width", width)
-                .attr("height", height);
-
-            // Colorado outline
-            const coloradoOutline = [
-                {lon: -109.060253, lat: 36.992426},
-                {lon: -102.041524, lat: 36.992426},
-                {lon: -102.041524, lat: 40.979897},
-                {lon: -109.060253, lat: 40.979897},
-                {lon: -109.060253, lat: 36.992426}
-            ];
-
-            // Set up scales
-            const xScale = d3.scaleLinear()
-                .domain([-109.06, -102.04]) // Colorado bounds
-                .range([margin.left, width - margin.right]);
-
-            const yScale = d3.scaleLinear()
-                .domain([36.99, 41.0]) // Colorado bounds
-                .range([height - margin.bottom, margin.top]);
-
-            // Draw Colorado outline
-            const lineGenerator = d3.line()
-                .x(d => xScale(d.lon))
-                .y(d => yScale(d.lat));
-
-            svg.append("path")
-                .datum(coloradoOutline)
-                .attr("d", lineGenerator)
-                .attr("fill", "none")
-                .attr("stroke", "#ccc")
-                .attr("stroke-width", 1)
-                .attr("stroke-dasharray", "5,5");
-
-            // Draw county boundaries
-            countyData.forEach(county => {
-                const coordinates = county.geometry.type === 'Polygon' 
-                    ? county.geometry.coordinates 
-                    : county.geometry.coordinates[0]; // For MultiPolygon, use first polygon
-                
-                coordinates.forEach(polygon => {
-                    svg.append("path")
-                        .datum(polygon)
-                        .attr("d", lineGenerator)
-                        .attr("class", "county-boundary");
-                    
-                    // Add county labels (centered)
-                    const center = d3.polygonCentroid(polygon);
-                    if (center[0] && center[1]) {
-                        svg.append("text")
-                            .attr("class", "county-label")
-                            .attr("x", xScale(center[0]))
-                            .attr("y", yScale(center[1]))
-                            .text(county.County);
-                    }
-                });
-            });
-
-            // Create tooltip
-            const tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
-
-            // Draw market points
-            const points = svg.selectAll(".market-point")
-                .data(marketData)
-                .enter()
-                .append("circle")
-                .attr("class", "market-point")
-                .attr("cx", d => xScale(d.lon))
-                .attr("cy", d => yScale(d.Latitude))
-                .attr("r", 8)
-                .attr("fill", d => d.Color)
-                .attr("stroke", "#fff")
-                .attr("stroke-width", 2)
-                .style("cursor", "pointer")
-                .on("mouseover", function(event, d) {
-                    tooltip.transition()
-                        .duration(200)
-                        .style("opacity", .9);
-                    tooltip.html(`
-                        <strong>${d.Name}</strong><br/>
-                        <em>${d.Date}</em><br/>
-                        ${d.Address}
-                    `)
-                        .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 28) + "px");
-                })
-                .on("mouseout", function() {
-                    tooltip.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                })
-                .on("click", function(event, d) {
-                    highlightMarket(d);
-                });
-        }
-
-        function initializeTable() {
-            const tableBody = d3.select("#market-table tbody");
-            
-            const rows = tableBody.selectAll("tr")
-                .data(marketData)
-                .enter()
-                .append("tr")
-                .on("click", function(event, d) {
-                    highlightMarket(d);
-                });
-
-            rows.append("td").html(d => `<strong>${d.Name}</strong>`);
-            rows.append("td").text(d => d.Date);
-            rows.append("td").text(d => {
-                if (d.Address.includes("Denver")) return "Denver";
-                if (d.Address.includes("Littleton")) return "Littleton";
-                return "Colorado";
-            });
-            rows.append("td").text(d => d.Cost);
-        }
-
-        function initializeFilters() {
-            // Date filter
-            document.getElementById('date-filter').addEventListener('change', applyFilters);
-            
-            // Cost filter
-            document.getElementById('cost-filter').addEventListener('change', applyFilters);
-            
-            // Search filter
-            document.getElementById('search').addEventListener('input', applyFilters);
-            
-            // Reset filters
-            document.getElementById('reset-filters').addEventListener('click', function() {
-                document.getElementById('date-filter').value = 'all';
-                document.getElementById('cost-filter').value = 'all';
-                document.getElementById('search').value = '';
-                document.getElementById('market-selector').value = '';
-                applyFilters();
-            });
-            
-            // Market selector
-            document.getElementById('market-selector').addEventListener('change', function() {
-                const selectedMarketName = this.value;
-                if (selectedMarketName) {
-                    const market = marketData.find(m => m.Name === selectedMarketName);
-                    if (market) {
-                        highlightMarket(market);
-                    }
-                }
-            });
-        }
-
-        function populateMarketSelector() {
-            const selector = document.getElementById('market-selector');
-            selector.innerHTML = '<option value="">Select a market...</option>';
-            
-            marketData.forEach(market => {
-                const option = document.createElement('option');
-                option.value = market.Name;
-                option.textContent = market.Name;
-                selector.appendChild(option);
-            });
-        }
-
-        function applyFilters() {
-            const dateFilter = document.getElementById('date-filter').value;
-            const costFilter = document.getElementById('cost-filter').value;
-            const searchTerm = document.getElementById('search').value.toLowerCase();
-
-            const filteredData = marketData.filter(market => {
-                // Date filter
-                if (dateFilter === 'nov' && !market.Date.includes('Nov')) return false;
-                if (dateFilter === 'dec' && !market.Date.includes('Dec')) return false;
-                
-                // Cost filter
-                if (costFilter === 'free' && !market.Cost.includes('Free')) return false;
-                
-                // Search filter
-                if (searchTerm && 
-                    !market.Name.toLowerCase().includes(searchTerm) && 
-                    !market.Address.toLowerCase().includes(searchTerm)) {
-                    return false;
-                }
-                
-                return true;
-            });
-
-            // Update table
-            const rows = d3.select("#market-table tbody").selectAll("tr")
-                .data(filteredData, d => d.Name);
-
-            rows.exit().remove();
-
-            const newRows = rows.enter()
-                .append("tr")
-                .on("click", function(event, d) {
-                    highlightMarket(d);
-                });
-
-            newRows.append("td").html(d => `<strong>${d.Name}</strong>`);
-            newRows.append("td").text(d => d.Date);
-            newRows.append("td").text(d => {
-                if (d.Address.includes("Denver")) return "Denver";
-                if (d.Address.includes("Littleton")) return "Littleton";
-                return "Colorado";
-            });
-            newRows.append("td").text(d => d.Cost);
-
-            // Update map points visibility
-            d3.selectAll(".market-point")
-                .style("opacity", d => filteredData.includes(d) ? 1 : 0.2);
-        }
-
-        function highlightMarket(market) {
-            // Reset all highlights
-            d3.selectAll(".market-point").attr("r", 8);
-            d3.selectAll("#market-table tr").classed("selected", false);
-            
-            // Highlight selected market on map
-            d3.selectAll(".market-point")
-                .filter(d => d.Name === market.Name)
-                .attr("r", 12);
-            
-            // Highlight selected market in table
-            d3.selectAll("#market-table tr")
-                .filter(d => d.Name === market.Name)
-                .classed("selected", true);
-            
-            // Update market selector
-            document.getElementById('market-selector').value = market.Name;
-            
-            // Show details
-            showMarketDetails(market);
-            
-            // Scroll to details
-            document.getElementById('market-details').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-
-        function showMarketDetails(market) {
-            const detailsContainer = document.getElementById('market-details');
-            
-            detailsContainer.innerHTML = `
-                <h3>${market.Name}</h3>
-                <div class="detail-item">
-                    <span class="detail-label">Dates:</span> ${market.Date}
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Location:</span> ${market.Address}
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Cost:</span> ${market.Cost}
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Description:</span> ${market.Description}
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Website:</span> 
-                    <a href="${market.Website}" target="_blank">${market.Website}</a>
-                </div>
-            `;
-            
-            detailsContainer.classList.add('active');
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            d3.select("#map svg").attr("width", document.getElementById('map').clientWidth);
-        });
-    </script>
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="script.js"></script>
 </body>
 </html>
