@@ -33,7 +33,8 @@ const state = {
     today: new Date(),
     tomorrow: new Date(Date.now() + 86400000),
     weekendStart: null,
-    weekendEnd: null
+    weekendEnd: null,
+    isInitialLoad: true
 };
 
 // Calculate weekend dates
@@ -65,10 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeMap() {
     console.log('🗺️  Initializing Leaflet map...');
     try {
-        // Create map with fixed zoom level (one step more zoomed than before)
+        // Create map with fixed zoom level, centered on Colorado's geographic center
         state.map = L.map('map', {
             zoom: 6.5,
-            center: [39.05, -105.55]
+            center: [39.0, -105.5]
         });
         
         L.tileLayer(CONFIG.MAP_TILE_PROVIDER, {
@@ -529,8 +530,8 @@ function applyFilters() {
     // Sort the filtered results
     sortFilteredMarkets();
     
-    // Fit bounds to filtered markers
-    if (state.filteredMarkets.length > 0) {
+    // Fit bounds to filtered markers (but NOT on initial load)
+    if (!state.isInitialLoad && state.filteredMarkets.length > 0) {
         setTimeout(() => {
             try {
                 const bounds = state.markerClusterGroup.getBounds();
@@ -541,6 +542,11 @@ function applyFilters() {
                 console.warn('Could not fit bounds:', e);
             }
         }, 100);
+    }
+    
+    // Mark initial load as complete after first filter
+    if (state.isInitialLoad) {
+        state.isInitialLoad = false;
     }
 }
 
