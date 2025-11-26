@@ -129,8 +129,9 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(255, 255, 255, 0.95);
     color: var(--text-primary);
     transition: border-color var(--transition-fast);
-    flex: 1;
-    min-width: 200px;
+    max-width: 300px;
+    margin-left: auto;
+    padding-right: 60px;
 }
 
 .header .search-input:focus {
@@ -638,7 +639,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .calendar-day.other-month {
     color: var(--text-light);
-    opacity: 0.3;
+    opacity: 0;
+    visibility: hidden;
 }
 
 .calendar-day.today {
@@ -852,7 +854,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .table-wrapper::-webkit-scrollbar,
 .details-panel::-webkit-scrollbar {
-    width: 8px;
+    width: 0;
 }
 
 .table-wrapper::-webkit-scrollbar-track,
@@ -862,13 +864,17 @@ h1, h2, h3, h4, h5, h6 {
 
 .table-wrapper::-webkit-scrollbar-thumb,
 .details-panel::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
+    background: transparent;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover,
 .details-panel::-webkit-scrollbar-thumb:hover {
-    background: var(--text-light);
+    background: transparent;
+}
+
+/* Hide scrollbars for Firefox */
+.details-panel {
+    scrollbar-width: none;
 }
 
 /* ============================================================================
