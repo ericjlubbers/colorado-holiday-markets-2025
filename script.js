@@ -65,13 +65,73 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeMap() {
     console.log('🗺️  Initializing Leaflet map...');
     try {
-        state.map = L.map('map').setView(CONFIG.MAP_CENTER, CONFIG.MAP_ZOOM);
+        // Create map with fixed zoom level (one step more zoomed than before)
+        state.map = L.map('map', {
+            zoom: 6.5,
+            center: [39.05, -105.55]
+        });
         
         L.tileLayer(CONFIG.MAP_TILE_PROVIDER, {
             attribution: CONFIG.MAP_ATTRIBUTION,
             maxZoom: 18,
             minZoom: 5
         }).addTo(state.map);
+        
+        // Add Colorado state border
+        const coloradoBorder = L.polyline([
+            [41.00, -102.04], [41.00, -102.05], [40.99, -106.94], [41.00, -109.06],
+            [40.98, -109.05], [36.99, -109.05], [36.99, -108.27], [37.00, -108.24],
+            [36.99, -107.30], [37.00, -106.52], [36.99, -104.05], [37.00, -103.21],
+            [37.00, -103.20], [36.99, -102.05], [41.00, -102.04]
+        ], {
+            color: '#c41e3a',
+            weight: 3,
+            opacity: 0.8,
+            fill: false
+        }).addTo(state.map);
+        
+        // Add dimming overlay outside Colorado borders
+        const coloradoPolygon = L.polygon([
+            [41.00, -102.04], [41.00, -102.05], [40.99, -106.94], [41.00, -109.06],
+            [40.98, -109.05], [36.99, -109.05], [36.99, -108.27], [37.00, -108.24],
+            [36.99, -107.30], [37.00, -106.52], [36.99, -104.05], [37.00, -103.21],
+            [37.00, -103.20], [36.99, -102.05], [41.00, -102.04]
+        ], {
+            color: 'transparent',
+            fill: true,
+            fillColor: 'white',
+            fillOpacity: 0,
+            weight: 0
+        }).addTo(state.map);
+        
+        // Create inverted polygon (world minus Colorado) for dimming
+        const outerBounds = [
+            [90, 180], [90, -180], [-90, -180], [-90, 180]
+        ];
+        const coloradoHole = [
+            [41.00, -102.04], [41.00, -102.05], [40.99, -106.94], [41.00, -109.06],
+            [40.98, -109.05], [36.99, -109.05], [36.99, -108.27], [37.00, -108.24],
+            [36.99, -107.30], [37.00, -106.52], [36.99, -104.05], [37.00, -103.21],
+            [37.00, -103.20], [36.99, -102.05], [41.00, -102.04]
+        ];
+        
+        L.polygon([outerBounds, coloradoHole], {
+            color: 'transparent',
+            fill: true,
+            fillColor: '#000000',
+            fillOpacity: 0.15,
+            weight: 0,
+            interactive: false
+        }).addTo(state.map);
+        
+        // Create a custom style to hide water features
+        const style = document.createElement('style');
+        style.textContent = `
+            .leaflet-tile-pane {
+                filter: saturate(1.1) brightness(1.02);
+            }
+        `;
+        document.head.appendChild(style);
         
         // Initialize marker cluster group
         // Using standard Leaflet.MarkerCluster spiderfication (circle layout)
@@ -215,24 +275,22 @@ function parseCSV(csv) {
 function extractCityFromAddress(address) {
     // Extract city from various address formats:
     // "Street Address, City, State Zip"
-    // "Street Address, City, CO Zip"
     // "Place Name, Street Address, City, CO Zip"
-    // "Street Address, Denver, CO 80211"
+    // "Bancroft Park, 2408 W Colorado Ave, Colorado Springs"
+    // "MCA Denver at the Holiday, 2644 W 32nd Ave., Denver, CO 80211"
+    // "Auraria Campus, Tivoli Quad, 1000 Larimer St., Denver"
     
     if (!address || address.trim() === '') return 'Unknown';
     
     const parts = address.split(',').map(p => p.trim());
     
-    // Look for the part that contains a state abbreviation (CO, etc.)
-    // The city should be right before the state
+    // Strategy 1: Look for state abbreviation (CO, etc.) - city is right before it
     for (let i = parts.length - 1; i >= 0; i--) {
         const part = parts[i];
-        // Check if this part contains a state abbreviation (2 uppercase letters, possibly followed by zip)
         if (/\b[A-Z]{2}\b\s*\d{5}/.test(part) || /^[A-Z]{2}$/.test(part)) {
-            // Found the state, city should be the previous part
+            // Found state, city is previous part
             if (i > 0) {
                 const cityPart = parts[i - 1];
-                // Validate it's not just a street address
                 if (cityPart && !cityPart.match(/^\d+\s/) && cityPart.length > 0) {
                     return cityPart;
                 }
@@ -241,11 +299,39 @@ function extractCityFromAddress(address) {
         }
     }
     
-    // Fallback: if we have at least 2 parts, assume second-to-last is city
+    // Strategy 2: City names that appear at the end (without state)
+    // Check last part for known Colorado cities
+    const knownCities = ['Denver', 'Boulder', 'Colorado Springs', 'Fort Collins', 'Pueblo', 'Aurora', 'Lakewood', 
+                         'Arlington', 'Littleton', 'Centennial', 'Golden', 'Durango', 'Loveland', 'Arvada', 
+                         'Westminster', 'Broomfield', 'Greeley', 'Longmont', 'Englewood', 'Castle Rock', 'Breckenridge',
+                         'Aspen', 'Vail', 'Telluride', 'Steamboat Springs', 'Estes Park', 'Black Hawk', 'Central City',
+                         'Manitou Springs', 'Woodland Park', 'Lyons', 'Nederland', 'Ward', 'Idaho Springs', 'Georgetown',
+                         'Empire', 'Winter Park', 'Grand Lake', 'Granby', 'Kremmling', 'Walden', 'North Fork',
+                         'Fort Garland', 'Trinidad', 'Walsenburg', 'La Junta', 'Alamosa', 'Monte Vista', 'Salida',
+                         'Canon City', 'Westcliffe', 'Creede', 'South Fork', 'Del Norte', 'Ouray', 'Silverton',
+                         'Niwot', 'Superior', 'Lafayette', 'Dacono', 'Frederick', 'Mead', 'Berthoud', 'Johnstown',
+                         'Firestone', 'Henderson', 'Dacono', 'Platteville', 'Fort Lupton', 'Brighton', 'Commerce City',
+                         'Thornton', 'Westminster', 'Wheat Ridge', 'Edgewater', 'Mountain View', 'Parker', 'Elizabeth',
+                         'Calhan', 'Woodland', 'Ramah', 'Yoder', 'Basalt', 'Carbondale', 'Glenwood Springs',
+                         'New Castle', 'Silt', 'Palisade', 'Grand Junction', 'Moab', 'Montrose', 'Olathe', 'Ridgway'];
+    
+    const lastPart = parts[parts.length - 1];
+    if (knownCities.some(city => lastPart.toLowerCase() === city.toLowerCase())) {
+        return lastPart;
+    }
+    
+    // Strategy 3: Look backwards through parts for a known city name
+    for (let i = parts.length - 1; i >= 0; i--) {
+        const part = parts[i];
+        if (knownCities.some(city => part.toLowerCase() === city.toLowerCase())) {
+            return part;
+        }
+    }
+    
+    // Strategy 4: Second-to-last part if last looks like state or zip
     if (parts.length >= 2) {
         const lastPart = parts[parts.length - 1];
-        // If last part looks like state+zip (e.g., "CO 80211"), city is second-to-last
-        if (/[A-Z]{2}\s*\d{5}/.test(lastPart) || /^[A-Z]{2}$/.test(lastPart)) {
+        if (/[A-Z]{2}\s*\d{5}|^\d{5}$|^[A-Z]{2}$/.test(lastPart)) {
             const cityPart = parts[parts.length - 2].trim();
             if (cityPart && !cityPart.match(/^\d+\s/) && cityPart.length > 0) {
                 return cityPart;
@@ -442,6 +528,20 @@ function applyFilters() {
     
     // Sort the filtered results
     sortFilteredMarkets();
+    
+    // Fit bounds to filtered markers
+    if (state.filteredMarkets.length > 0) {
+        setTimeout(() => {
+            try {
+                const bounds = state.markerClusterGroup.getBounds();
+                if (bounds.isValid()) {
+                    state.map.fitBounds(bounds, { padding: [50, 50] });
+                }
+            } catch (e) {
+                console.warn('Could not fit bounds:', e);
+            }
+        }, 100);
+    }
 }
 
 function sortFilteredMarkets() {
@@ -523,20 +623,6 @@ function renderMarkers() {
         state.markerClusterGroup.addLayer(marker);
         state.markers[market.name] = { marker, market };
     });
-    
-    // Fit map bounds to filtered markers if any exist
-    if (state.filteredMarkets.length > 0) {
-        setTimeout(() => {
-            try {
-                const bounds = state.markerClusterGroup.getBounds();
-                if (bounds.isValid()) {
-                    state.map.fitBounds(bounds, { padding: [50, 50] });
-                }
-            } catch (e) {
-                console.warn('Could not fit bounds:', e);
-            }
-        }, 100);
-    }
     
     console.log('✅ Markers rendered, total:', Object.keys(state.markers).length);
 }
